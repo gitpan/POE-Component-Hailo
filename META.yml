@@ -30,4 +30,4 @@ resources:
   homepage: http://search.cpan.org/dist/POE-Component-Hailo
   license: http://dev.perl.org/licenses/
   repository: git://github.com/hinrik/poe-component-hailo.git
-version: 0.02
+version: 0.03
