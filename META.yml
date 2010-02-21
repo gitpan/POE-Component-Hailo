@@ -1,0 +1,33 @@
+---
+abstract: 'A non-blocking wrapper around L<Hailo|Hailo>'
+author:
+  - 'Hinrik Örn Sigurðsson <hinrik.sig@gmail.com>'
+build_requires:
+  ExtUtils::MakeMaker: 6.42
+  Test::More: 0
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
+distribution_type: module
+generated_by: 'Module::Install version 0.91'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: POE-Component-Hailo
+no_index:
+  directory:
+    - inc
+    - t
+    - xt
+requires:
+  Hailo: 0.15
+  POE: 0
+  Try::Tiny: 0.03
+  perl: 5.10.0
+resources:
+  Ratings: http://cpanratings.perl.org/d/POE-Component-Hailo
+  bugtracker: http://github.com/hinrik/poe-component-hailo/issues
+  homepage: http://search.cpan.org/dist/POE-Component-Hailo
+  license: http://dev.perl.org/licenses/
+  repository: git://github.com/hinrik/poe-component-hailo.git
+version: 0.02
