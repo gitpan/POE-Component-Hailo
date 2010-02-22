@@ -6,7 +6,36 @@ use warnings;
 use Carp 'croak';
 use POE qw(Wheel::Run Filter::Reference);
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
+
+my $CHILD_CODE = <<'END';
+use strict;
+use warnings;
+use Hailo;
+use POE::Filter::Reference;
+
+$| = 1;
+$0 = 'hailo';
+
+if ($^O eq 'MSWin32') {
+    binmode STDIN;
+    binmode STDOUT;
+}
+
+my $hailo = Hailo->new(@ARGV);
+my $filter = POE::Filter::Reference->new;
+my $raw;
+my $size = 4096;
+while (sysread STDIN, $raw, $size) {
+    my $requests = $filter->get([$raw]);
+    for my $req (@$requests) {
+        my $method = $req->{method};
+        $req->{result} = [$hailo->$method(@{ $req->{args} })];
+        my $response = $filter->put([$req]);
+        print @$response;
+    }
+}
+END
 
 sub spawn {
     my ($package, %args) = @_;
@@ -58,10 +87,7 @@ sub _start {
     }
 
     $self->{wheel} = POE::Wheel::Run->new(
-        Program      => \&_main,
-        ProgramArgs  => [ %{ $self->{Hailo_args} } ],
-        ErrorEvent   => '_child_error',
-        CloseEvent   => '_child_closed',
+        Program      => [$^X, '-e', $CHILD_CODE, %{ $self->{Hailo_args} }],
         StdoutEvent  => '_child_stdout', 
         StderrEvent  => '_child_stderr',
         StdioFilter  => POE::Filter::Reference->new(),
@@ -147,45 +173,6 @@ sub _go_away {
     return;
 }
 
-sub _main {
-    my %hailo_args = @_;
-
-    if ($^O eq 'MSWin32') {
-        binmode STDIN;
-        binmode STDOUT;
-    }
-
-    eval 'use Hailo';
-    if ($@) {
-        chomp $@;
-        die "Couldn't load Hailo: $@\n"
-    }
-
-    my $hailo;
-    eval {
-        $hailo = Hailo->new(%hailo_args);
-    };
-    if ($@) {
-        chomp $@;
-        die "$@\n";
-    };
-
-    my $raw;
-    my $size = 4096;
-    my $filter = POE::Filter::Reference->new();
-
-    while (sysread STDIN, $raw, $size) {
-        my $requests = $filter->get([$raw]);
-        for my $req (@$requests) {
-            my $method = $req->{method};
-            $req->{result} = [$hailo->$method(@{ $req->{args} })];
-            my $response = $filter->put([$req]);
-            print @$response;
-        }
-    }
-
-    return;
-}
 
 1;
 
