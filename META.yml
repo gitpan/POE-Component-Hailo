@@ -22,7 +22,6 @@ no_index:
 requires:
   Hailo: 0.15
   POE: 0
-  Try::Tiny: 0.03
   perl: 5.10.0
 resources:
   Ratings: http://cpanratings.perl.org/d/POE-Component-Hailo
@@ -30,4 +29,4 @@ resources:
   homepage: http://search.cpan.org/dist/POE-Component-Hailo
   license: http://dev.perl.org/licenses/
   repository: git://github.com/hinrik/poe-component-hailo.git
-version: 0.03
+version: 0.04
