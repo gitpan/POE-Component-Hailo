@@ -6,7 +6,7 @@ use warnings;
 use Carp 'croak';
 use POE qw(Wheel::Run Filter::Reference);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 my $CHILD_CODE = <<'END';
 use strict;
@@ -22,10 +22,13 @@ if ($^O eq 'MSWin32') {
     binmode STDOUT;
 }
 
-my $hailo = Hailo->new(@ARGV);
 my $filter = POE::Filter::Reference->new;
+my $unpacked = unpack 'u*', $ARGV[0];
+my $args = @{ $filter->get([$unpacked]) }[0];
+my $hailo = Hailo->new(%$args);
 my $raw;
 my $size = 4096;
+
 while (sysread STDIN, $raw, $size) {
     my $requests = $filter->get([$raw]);
     for my $req (@$requests) {
@@ -86,11 +89,15 @@ sub _start {
         $kernel->refcount_increment($self->{session_id}, __PACKAGE__);
     }
 
+    my $filter = POE::Filter::Reference->new;
+    my $args = @{ $filter->put([$self->{Hailo_args}]) }[0];
+    my $p_args = pack 'u*', $args;
+
     $self->{wheel} = POE::Wheel::Run->new(
-        Program      => [$^X, '-e', $CHILD_CODE, %{ $self->{Hailo_args} }],
+        Program      => [$^X, '-e', $CHILD_CODE, $p_args],
         StdoutEvent  => '_child_stdout', 
         StderrEvent  => '_child_stderr',
-        StdioFilter  => POE::Filter::Reference->new(),
+        StdioFilter  => $filter,
         ($^O eq 'MSWin32' ? (CloseOnCall => 0) : (CloseOnCall => 1)),
     );
 
