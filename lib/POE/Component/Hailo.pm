@@ -7,7 +7,7 @@ use Carp 'croak';
 use Hailo;
 use POE qw(Wheel::Run Filter::Reference);
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 sub spawn {
     my ($package, %args) = @_;
@@ -117,7 +117,7 @@ sub _sig_chld {
 
 sub _child_stderr {
     my ($kernel, $self, $input) = @_[KERNEL, OBJECT, ARG0];
-    warn "$input\n" if $self->{debug};
+    warn "$input\n";
     return;
 }
 
@@ -240,11 +240,11 @@ This is the constructor. It takes the following arguments:
 
 B<'alias'>, an optional alias for the component's session.
 
-B<'debug'>, set to a true value if you want debug output to be printed.
-Defaults to false.
-
 B<'Hailo_args'>, a hash reference of arguments to pass to L<Hailo|Hailo>'s
 constructor.
+
+B<'options'>, a hash reference of options to pass to
+L<POE::Session|POE::Session>'s constructor.
 
 =head2 C<session_id>
 

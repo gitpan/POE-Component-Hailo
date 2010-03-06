@@ -50,10 +50,10 @@ METHODS
 
     'alias', an optional alias for the component's session.
 
-    'debug', set to a true value if you want debug output to be printed.
-    Defaults to false.
-
     'Hailo_args', a hash reference of arguments to pass to Hailo's
+    constructor.
+
+    'options', a hash reference of options to pass to POE::Session's
     constructor.
 
   "session_id"
