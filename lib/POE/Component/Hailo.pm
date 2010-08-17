@@ -1,13 +1,17 @@
 package POE::Component::Hailo;
+BEGIN {
+  $POE::Component::Hailo::AUTHORITY = 'cpan:HINRIK';
+}
+BEGIN {
+  $POE::Component::Hailo::VERSION = '0.10';
+}
 
 use 5.010;
 use strict;
-use warnings;
+use warnings FATAL => 'all';
 use Carp 'croak';
 use Hailo;
 use POE qw(Wheel::Run Filter::Reference);
-
-our $VERSION = '0.09';
 
 sub spawn {
     my ($package, %args) = @_;
